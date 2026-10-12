@@ -1,0 +1,15 @@
+# HTTP — ACME only; redirect to HTTPS once cert exists (see entrypoint.sh).
+
+server {
+    listen 80;
+    listen [::]:80;
+    server_name ${WEB_HOST} ${API_HOST};
+
+    location ^~ /.well-known/acme-challenge/ {
+        root /var/www/certbot;
+    }
+
+    location / {
+        return 301 https://$host$request_uri;
+    }
+}

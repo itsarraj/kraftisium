@@ -1,0 +1,17 @@
+# Keep k3s Traefik internal (ClusterIP) so host nginx owns 80/443.
+# Install: sudo cp run_on_server/k3s-traefik-clusterip.yaml /var/lib/rancher/k3s/server/manifests/
+# k3s applies HelmChartConfig automatically; Traefik stays available for in-cluster Ingress.
+apiVersion: helm.cattle.io/v1
+kind: HelmChartConfig
+metadata:
+  name: traefik
+  namespace: kube-system
+spec:
+  valuesContent: |-
+    service:
+      enabled: true
+      type: ClusterIP
+    providers:
+      kubernetesIngress:
+        publishedService:
+          enabled: false

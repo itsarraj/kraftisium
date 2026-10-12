@@ -1,0 +1,81 @@
+{
+  "description": "Complex multi-case dataset for recall@K / MRR. Intended to be small but more realistic than dataset_smoke.json.",
+  "cases": [
+    {
+      "id": "backend_python_api",
+      "resume_text": "Backend engineer with 6+ years building Python services (FastAPI, Django), Postgres, Redis, Docker, CI/CD. Designed REST APIs and async workers. Some AWS experience.",
+      "k": 5,
+      "candidates": [
+        { "id": "b1", "text": "Backend engineer (Python) — FastAPI, Postgres, Redis, AWS. Build and operate APIs.", "relevant": true },
+        { "id": "b2", "text": "Frontend engineer — React, TypeScript, CSS, design systems.", "relevant": false },
+        { "id": "b3", "text": "DevOps engineer — Kubernetes, Terraform, observability, on-call.", "relevant": false },
+        { "id": "b4", "text": "Data analyst — SQL, dashboards, stakeholder reporting.", "relevant": false },
+        { "id": "b5", "text": "Senior backend engineer — Python, distributed systems, Postgres, message queues.", "relevant": true },
+        { "id": "b6", "text": "Mobile engineer — React Native, Expo, iOS/Android releases.", "relevant": false },
+        { "id": "b7", "text": "Line cook — nights/weekends, fast-paced kitchen.", "relevant": false },
+        { "id": "b8", "text": "QA engineer — test plans, Cypress, Playwright, automation.", "relevant": false }
+      ]
+    },
+    {
+      "id": "data_engineer_batch_stream",
+      "resume_text": "Data engineer. Built ETL/ELT pipelines with Python, Airflow, dbt, and Spark. Strong SQL. Worked with S3 and Redshift. Built batch and some streaming jobs.",
+      "k": 5,
+      "candidates": [
+        { "id": "d1", "text": "Data engineer — Airflow, dbt, Python, Spark, data warehouses.", "relevant": true },
+        { "id": "d2", "text": "Backend engineer — Go microservices, gRPC, Kubernetes.", "relevant": false },
+        { "id": "d3", "text": "Machine learning engineer — model training, PyTorch, evaluation pipelines.", "relevant": false },
+        { "id": "d4", "text": "Data analyst — BI dashboards, Looker, SQL.", "relevant": false },
+        { "id": "d5", "text": "Senior data engineer — Spark, streaming, Kafka, Airflow, SQL.", "relevant": true },
+        { "id": "d6", "text": "Product manager — roadmaps, stakeholder management.", "relevant": false },
+        { "id": "d7", "text": "Site reliability engineer — Terraform, incident response, monitoring.", "relevant": false },
+        { "id": "d8", "text": "Sales development rep — outbound calls and lead qualification.", "relevant": false }
+      ]
+    },
+    {
+      "id": "frontend_react_typescript",
+      "resume_text": "Frontend engineer specializing in React, TypeScript, Next.js, accessibility, performance, and component libraries. Worked closely with designers; wrote tests with Playwright/Jest.",
+      "k": 5,
+      "candidates": [
+        { "id": "f1", "text": "Frontend engineer — React, TypeScript, Next.js, accessibility.", "relevant": true },
+        { "id": "f2", "text": "Backend engineer — Node.js APIs, Postgres, Redis.", "relevant": false },
+        { "id": "f3", "text": "UI engineer — design systems, React, Storybook, CSS-in-JS.", "relevant": true },
+        { "id": "f4", "text": "DevOps engineer — Kubernetes, Terraform, AWS.", "relevant": false },
+        { "id": "f5", "text": "Data engineer — Airflow, Spark, SQL pipelines.", "relevant": false },
+        { "id": "f6", "text": "Accountant — month-end close, financial statements.", "relevant": false },
+        { "id": "f7", "text": "Customer support — troubleshooting, ticketing systems.", "relevant": false },
+        { "id": "f8", "text": "Graphic designer — Figma, branding, marketing assets.", "relevant": false }
+      ]
+    },
+    {
+      "id": "devops_platform_k8s",
+      "resume_text": "Platform/SRE engineer. Operated Kubernetes clusters, built Terraform modules, set up monitoring with Prometheus/Grafana, handled incident response and on-call rotations.",
+      "k": 5,
+      "candidates": [
+        { "id": "p1", "text": "Site reliability engineer — Kubernetes, Terraform, observability, on-call.", "relevant": true },
+        { "id": "p2", "text": "Platform engineer — Kubernetes, CI/CD, cloud networking, monitoring.", "relevant": true },
+        { "id": "p3", "text": "Backend engineer — Python, FastAPI, Postgres.", "relevant": false },
+        { "id": "p4", "text": "Frontend engineer — React, TypeScript.", "relevant": false },
+        { "id": "p5", "text": "IT helpdesk — laptops, resets, ticket triage.", "relevant": false },
+        { "id": "p6", "text": "Data analyst — SQL dashboards.", "relevant": false },
+        { "id": "p7", "text": "Recruiter — sourcing and interviews.", "relevant": false },
+        { "id": "p8", "text": "Warehouse associate — packing and shipping.", "relevant": false }
+      ]
+    },
+    {
+      "id": "mixed_backend_plus_ml",
+      "resume_text": "Software engineer with backend focus (Python, APIs, Postgres) and some applied ML experience (embeddings, semantic search, evaluation). Built pipelines for text similarity search.",
+      "k": 5,
+      "candidates": [
+        { "id": "m1", "text": "Backend engineer — Python APIs, Postgres, async workers.", "relevant": true },
+        { "id": "m2", "text": "Machine learning engineer — embeddings, retrieval, evaluation, PyTorch.", "relevant": true },
+        { "id": "m3", "text": "Data engineer — Airflow, Spark, dbt.", "relevant": false },
+        { "id": "m4", "text": "Frontend engineer — React, TypeScript.", "relevant": false },
+        { "id": "m5", "text": "Sales — outbound and CRM management.", "relevant": false },
+        { "id": "m6", "text": "Product manager — roadmap planning.", "relevant": false },
+        { "id": "m7", "text": "Security engineer — threat modeling, appsec.", "relevant": false },
+        { "id": "m8", "text": "Cook — kitchen staff.", "relevant": false }
+      ]
+    }
+  ]
+}
+

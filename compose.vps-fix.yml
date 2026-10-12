@@ -1,0 +1,55 @@
+# VPS workaround when Docker embedded DNS (127.0.0.11) and iptables port publishing fail.
+# Use with host nginx proxying to fixed container IPs.
+#
+#   docker compose -f compose.base.yml -f compose.host-edge.yml -f compose.vps-fix.yml up -d
+
+networks:
+  default:
+    ipam:
+      config:
+        - subnet: 172.28.0.0/24
+
+services:
+  postgres:
+    networks:
+      default:
+        ipv4_address: 172.28.0.10
+
+  redis:
+    networks:
+      default:
+        ipv4_address: 172.28.0.11
+
+  rustfs:
+    networks:
+      default:
+        ipv4_address: 172.28.0.12
+
+  bff:
+    networks:
+      default:
+        ipv4_address: 172.28.0.20
+    ports: !reset []
+    environment:
+      BFF__DATABASE__HOST: 172.28.0.10
+      BFF__REDIS__HOST: 172.28.0.11
+      BFF__OBJECT_STORAGE__ENDPOINT: http://172.28.0.12:9000
+      # Docker DNS is broken on this VPS — use the matcher static IP, never the service name.
+      BFF__MATCHER__BASE_URL: ${BFF__MATCHER__BASE_URL:-http://172.28.0.22:8095}
+      DATABASE_URL: postgres://seekers:${POSTGRES_PASSWORD}@172.28.0.10:5432/kraftisium
+
+  resume-matcher:
+    networks:
+      default:
+        ipv4_address: 172.28.0.22
+    ports: !reset []
+    environment:
+      DATABASE_URL: postgres://seekers:${POSTGRES_PASSWORD}@172.28.0.10:5432/kraftisium
+      MATCHER_BFF_URL: http://172.28.0.20:8000
+      MATCHER_DEVICE: cpu
+
+  kraftisium-web:
+    networks:
+      default:
+        ipv4_address: 172.28.0.21
+    ports: !reset []

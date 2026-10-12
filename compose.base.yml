@@ -1,0 +1,133 @@
+# Shared service definitions for all environments.
+#
+# Overlays:
+#   compose.dev.yml       — local Docker (published ports)
+#   compose.prod.yml      — dedicated VPS (edge nginx + certbot)
+#   compose.host-edge.yml — VPS with existing host nginx (loopback ports)
+
+name: kraftisium
+
+services:
+  postgres:
+    image: postgres:16-bookworm
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: seekers
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-seekers_postgres_password_change_me}
+      POSTGRES_DB: kraftisium
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/postgres/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U seekers -d kraftisium"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  rustfs:
+    image: rustfs/rustfs:latest
+    restart: unless-stopped
+    environment:
+      RUSTFS_ALLOW_INSECURE_DEFAULT_CREDENTIALS: "true"
+    volumes:
+      - rustfs_data:/data
+      - rustfs_logs:/logs
+
+  bff:
+    build:
+      context: ./bff
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rustfs:
+        condition: service_started
+    env_file:
+      - ./bff/.env
+    environment:
+      BFF__APPLICATION_HOST: 0.0.0.0
+      BFF__DATABASE__HOST: postgres
+      BFF__DATABASE__USERNAME: seekers
+      BFF__DATABASE__PASSWORD: ${POSTGRES_PASSWORD:-seekers_postgres_password_change_me}
+      BFF__REDIS__HOST: redis
+      BFF__OBJECT_STORAGE__ENDPOINT: http://rustfs:9000
+      BFF__JWT__SECRET: ${JWT_SECRET:-your-super-secret-jwt-key-change-this-in-production}
+      BFF__EMAIL__FRONTEND_BASE_URL: ${PUBLIC_WEB_URL:-http://localhost}
+      BFF__MATCHER__BASE_URL: ${BFF__MATCHER__BASE_URL:-}
+      BFF__MATCHER__INTERNAL_SECRET: ${BFF__MATCHER__INTERNAL_SECRET:-}
+      BFF__TURNSTILE__SECRET_KEY: ${BFF__TURNSTILE__SECRET_KEY:-}
+      BFF__TURNSTILE__HOSTNAMES: ${BFF__TURNSTILE__HOSTNAMES:-}
+      BFF__SUBSCRIPTION__FOUNDING_PREMIUM_LIMIT: ${BFF__SUBSCRIPTION__FOUNDING_PREMIUM_LIMIT:-0}
+      BFF__SUBSCRIPTION__FOUNDING_PREMIUM_YEARS: ${BFF__SUBSCRIPTION__FOUNDING_PREMIUM_YEARS:-1}
+      BFF__SUBSCRIPTION__YEARLY_PRICE_USD: ${BFF__SUBSCRIPTION__YEARLY_PRICE_USD:-199}
+      BFF__SUBSCRIPTION__FREE_AI_MATCHES_LIMIT: ${BFF__SUBSCRIPTION__FREE_AI_MATCHES_LIMIT:-3}
+      BFF__SUBSCRIPTION__AUTO_GRANT_YEARLY_PREMIUM: ${BFF__SUBSCRIPTION__AUTO_GRANT_YEARLY_PREMIUM:-false}
+      DATABASE_URL: postgres://seekers:${POSTGRES_PASSWORD:-seekers_postgres_password_change_me}@postgres:5432/kraftisium
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8000/api/v1/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  resume-matcher:
+    profiles:
+      - ml
+    build:
+      context: ./ai-tests
+      dockerfile: Dockerfile.matcher
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      bff:
+        condition: service_started
+    environment:
+      DATABASE_URL: postgres://seekers:${POSTGRES_PASSWORD:-seekers_postgres_password_change_me}@postgres:5432/kraftisium
+      MATCHER_BFF_URL: http://bff:8000
+      MATCHER_PREFILTER_LIMIT: ${MATCHER_PREFILTER_LIMIT:-200}
+      MATCHER_PREFILTER_DAYS: ${MATCHER_PREFILTER_DAYS:-365}
+      MATCHER_INTERNAL_SECRET: ${MATCHER_INTERNAL_SECRET:-}
+      MATCHER_TOP_K: ${MATCHER_TOP_K:-25}
+      MATCHER_MODEL_ID: ${MATCHER_MODEL_ID:-sentence-transformers/all-MiniLM-L6-v2}
+      MATCHER_DEVICE: ${MATCHER_DEVICE:-cpu}
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:8095/health"]
+      interval: 30s
+      timeout: 10s
+      start_period: 90s
+      retries: 5
+
+  kraftisium-web:
+    build:
+      context: ./ui
+      dockerfile: Dockerfile
+      args:
+        VITE_BFF_API_URL: ${VITE_BFF_API_URL:-http://localhost:8000}
+        VITE_BFF_API_VERSION: ${VITE_BFF_API_VERSION:-v1}
+        VITE_TURNSTILE_SITE_KEY: ${VITE_TURNSTILE_SITE_KEY:-}
+    restart: unless-stopped
+    depends_on:
+      bff:
+        condition: service_started
+
+volumes:
+  postgres_data:
+  redis_data:
+  rustfs_data:
+  rustfs_logs:

@@ -1,0 +1,15 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .k-input {
+    @apply rounded-lg border border-white/10 bg-brand-surface px-3 py-3 text-white;
+  }
+  .k-btn {
+    @apply items-center rounded-xl bg-brand-accent py-4;
+  }
+  .k-btn-outline {
+    @apply items-center rounded-xl border border-white/10 py-4;
+  }
+}

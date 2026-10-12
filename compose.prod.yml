@@ -1,0 +1,87 @@
+# Production / VPS deployment with bundled edge nginx + certbot
+#
+# Usage:
+#   docker compose -f compose.base.yml -f compose.prod.yml up -d --build
+#   docker compose --profile cert -f compose.base.yml -f compose.prod.yml run --rm certbot \
+#     certonly --webroot -w /var/www/certbot -d "${WEB_HOST}" -d "${API_HOST}" \
+#     --email "${CERTBOT_EMAIL}" --agree-tos --no-eff-email
+
+services:
+  bff:
+    environment:
+      BFF__EMAIL__BASE_URL: ${PUBLIC_BFF_URL:-https://api.example.com}
+      BFF__EMAIL__FRONTEND_BASE_URL: ${PUBLIC_WEB_URL:-https://app.example.com}
+      # configuration.yaml has this false for local/dev convenience; production
+      # always forces it true here regardless of that file's value.
+      BFF__AUTH__REQUIRE_EMAIL_VERIFICATION: "true"
+
+  kraftisium-web:
+    build:
+      args:
+        VITE_BFF_API_URL: ${PUBLIC_BFF_URL:-__RELATIVE__}
+        VITE_BFF_API_VERSION: ${VITE_BFF_API_VERSION:-v1}
+        VITE_TURNSTILE_SITE_KEY: ${VITE_TURNSTILE_SITE_KEY:-}
+
+  reverse-proxy:
+    build:
+      context: ./docker/reverse-proxy
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      kraftisium-web:
+        condition: service_started
+      bff:
+        condition: service_started
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      WEB_HOST: ${WEB_HOST:-kraftisium.xyz}
+      API_HOST: ${API_HOST:-api.kraftisium.xyz}
+      CERT_PRIMARY_DOMAIN: ${CERT_PRIMARY_DOMAIN:-kraftisium.xyz}
+      NGINX_SAME_ORIGIN: ${NGINX_SAME_ORIGIN:-0}
+    volumes:
+      - certbot_www:/var/www/certbot
+      - certbot_conf:/etc/letsencrypt
+
+  certbot:
+    image: certbot/certbot:v2.11.0
+    profiles:
+      - cert
+    volumes:
+      - certbot_www:/var/www/certbot
+      - certbot_conf:/etc/letsencrypt
+
+  # Off-VPS backups: pg_dump + a mirror of the RustFS bucket, pushed to an
+  # S3-compatible target (Cloudflare R2 by default). See docker/backup/README.md.
+  backup:
+    build:
+      context: ./docker/backup
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rustfs:
+        condition: service_started
+    env_file:
+      - ./bff/.env
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: seekers
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-seekers_postgres_password_change_me}
+      POSTGRES_DB: kraftisium
+      # Overrides whatever's in bff/.env — the backup container reaches
+      # RustFS over the compose network, not via the host-facing endpoint.
+      BFF__OBJECT_STORAGE__ENDPOINT: http://rustfs:9000
+      BACKUP_S3_ENDPOINT: ${BACKUP_S3_ENDPOINT:?set BACKUP_S3_ENDPOINT in .env — see docker/backup/README.md}
+      BACKUP_S3_BUCKET: ${BACKUP_S3_BUCKET:?set BACKUP_S3_BUCKET in .env — see docker/backup/README.md}
+      BACKUP_S3_ACCESS_KEY_ID: ${BACKUP_S3_ACCESS_KEY_ID:?set BACKUP_S3_ACCESS_KEY_ID in .env — see docker/backup/README.md}
+      BACKUP_S3_SECRET_ACCESS_KEY: ${BACKUP_S3_SECRET_ACCESS_KEY:?set BACKUP_S3_SECRET_ACCESS_KEY in .env — see docker/backup/README.md}
+      BACKUP_S3_PROVIDER: ${BACKUP_S3_PROVIDER:-Cloudflare}
+      BACKUP_INTERVAL_SECONDS: ${BACKUP_INTERVAL_SECONDS:-86400}
+      RETENTION_DAYS: ${BACKUP_RETENTION_DAYS:-14}
+
+volumes:
+  certbot_conf:
+  certbot_www:

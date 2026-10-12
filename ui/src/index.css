@@ -1,0 +1,92 @@
+@import "daisyui/dist/full.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Hanken Grotesk Font Loading */
+@font-face {
+  font-family: 'Hanken Grotesk';
+  src: url('/fonts/HankenGrotesk-VariableFont_wght.ttf') format('truetype-variations');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Hanken Grotesk';
+  src: url('/fonts/HankenGrotesk-Italic-VariableFont_wght.ttf') format('truetype-variations');
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Fallback static fonts for older browsers */
+@font-face {
+  font-family: 'Hanken Grotesk Fallback';
+  src: url('/fonts/static/HankenGrotesk-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Hanken Grotesk Fallback';
+  src: url('/fonts/static/HankenGrotesk-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Hanken Grotesk Fallback';
+  src: url('/fonts/static/HankenGrotesk-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Hanken Grotesk Fallback';
+  src: url('/fonts/static/HankenGrotesk-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Hanken Grotesk Fallback';
+  src: url('/fonts/static/HankenGrotesk-Italic.ttf') format('truetype');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Custom styles */
+@layer base {
+  html {
+    font-family: 'Hanken Grotesk', 'Hanken Grotesk Fallback', system-ui, sans-serif;
+    @apply bg-[#2b2b2b] text-white;
+  }
+  body {
+    @apply bg-[#2b2b2b] text-white;
+  }
+}
+
+@layer components {
+  .k-input {
+    @apply w-full px-4 py-3 rounded-lg bg-brand-surface border border-white/10 text-white placeholder-white/40 shadow-brand focus:outline-none focus:ring-2 focus:ring-brand-accent focus:border-transparent;
+  }
+  .k-btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-brand-accent px-6 py-3.5 font-bold text-brand-bg shadow-brand hover:bg-brand-accentHover transition-colors disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  .k-btn-outline {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 px-6 py-3.5 font-semibold text-white hover:bg-white/5 transition-colors disabled:opacity-50;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}

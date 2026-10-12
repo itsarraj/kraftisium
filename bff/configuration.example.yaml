@@ -1,0 +1,56 @@
+application_host: "127.0.0.1"
+application_port: 8000
+
+database:
+  host: "127.0.0.1"
+  port: 5432
+  username: "cesium"
+  password: ""
+  database_name: "kraftisium"
+
+redis:
+  host: "127.0.0.1"
+  port: 6379
+  password: null
+  database: null
+
+jwt:
+  secret: "your-super-secret-jwt-key-change-this-in-production"
+  access_token_expiration_hours: 24
+  refresh_token_expiration_days: 30
+
+stats:
+  use_hardcoded: true
+  refresh_interval_seconds: 3600
+  live_jobs: 764
+  companies: 500
+  candidates: 52417
+  new_jobs: 516
+
+# Hybrid AI matches: Postgres full-text prefilter + embedding rank (see ai-tests/matcher_service.py).
+matcher:
+  base_url: "http://127.0.0.1:8095"
+  internal_secret: null
+
+# Premium: grant via payment or promo codes at checkout (no automatic free tier on signup).
+# Set auto_grant_yearly_premium: true in dev only.
+subscription:
+  founding_premium_limit: 0
+  founding_premium_years: 1
+  yearly_price_usd: 199
+  free_ai_matches_limit: 3
+  auto_grant_yearly_premium: false
+
+object_storage:
+  endpoint: "http://127.0.0.1:9000"
+  bucket: "resumes"
+  access_key_id: "rustfsadmin"
+  secret_access_key: "rustfsadmin"
+  region: "us-east-1"
+
+email:
+  api_key: ""
+  from_email: "noreply@resend.dev"
+  from_name: "Kraftisium"
+  base_url: "http://localhost:8000"
+  frontend_base_url: "http://localhost:5173"

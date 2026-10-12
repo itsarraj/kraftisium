@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "xyz.kraftisium.jobs",
+      "sha256_cert_fingerprints": [
+        "99:45:58:7F:F8:97:6F:D4:56:39:F8:95:19:60:1D:CD:AD:35:AE:4D:69:B8:86:56:A4:41:9C:58:D2:88:95:60"
+      ]
+    }
+  }
+]

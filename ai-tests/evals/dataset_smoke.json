@@ -1,0 +1,32 @@
+{
+  "description": "Tiny smoke set for recall@K / MRR (no DB; pairwise ranking only).",
+  "cases": [
+    {
+      "id": "python_vs_unrelated",
+      "resume_text": "Senior software engineer. Strong Python, FastAPI, PostgreSQL, Docker.",
+      "k": 5,
+      "candidates": [
+        {
+          "id": "j1",
+          "text": "Backend engineer — Python, APIs, Postgres, AWS.",
+          "relevant": true
+        },
+        {
+          "id": "j2",
+          "text": "Line cook for busy downtown restaurant. Nights and weekends.",
+          "relevant": false
+        },
+        {
+          "id": "j3",
+          "text": "Data analyst — SQL dashboards and stakeholder reporting.",
+          "relevant": false
+        },
+        {
+          "id": "j4",
+          "text": "Platform engineer — Kubernetes, Terraform, Go microservices.",
+          "relevant": false
+        }
+      ]
+    }
+  ]
+}

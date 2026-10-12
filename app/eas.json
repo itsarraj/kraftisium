@@ -1,0 +1,50 @@
+{
+  "cli": {
+    "version": ">= 16.0.0",
+    "appVersionSource": "remote"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "env": {
+        "EXPO_PUBLIC_BFF_API_URL": "https://api.kraftisium.xyz",
+        "EXPO_PUBLIC_BFF_API_VERSION": "v1"
+      },
+      "android": {
+        "buildType": "apk",
+        "credentialsSource": "remote"
+      }
+    },
+    "preview": {
+      "distribution": "internal",
+      "env": {
+        "EXPO_PUBLIC_BFF_API_URL": "https://api.kraftisium.xyz",
+        "EXPO_PUBLIC_BFF_API_VERSION": "v1"
+      },
+      "android": {
+        "buildType": "apk",
+        "credentialsSource": "remote"
+      }
+    },
+    "production": {
+      "developmentClient": false,
+      "autoIncrement": true,
+      "env": {
+        "EXPO_PUBLIC_BFF_API_URL": "https://api.kraftisium.xyz",
+        "EXPO_PUBLIC_BFF_API_VERSION": "v1"
+      },
+      "android": {
+        "buildType": "app-bundle",
+        "credentialsSource": "remote"
+      }
+    }
+  },
+  "submit": {
+    "production": {
+      "android": {
+        "track": "internal"
+      }
+    }
+  }
+}

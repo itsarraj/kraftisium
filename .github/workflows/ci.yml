@@ -1,0 +1,64 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  bff:
+    name: bff (build, clippy)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: bff
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: bff
+      # No sqlx::query!/query_as! macros are used anywhere in this crate
+      # (see git history — they were deliberately replaced with the runtime
+      # sqlx::query/query_as variants), so build/check/clippy need no live
+      # database connection.
+      # No --locked: Cargo.lock is gitignored in this repo, so a fresh
+      # checkout has none for cargo to lock against.
+      - run: cargo build
+      - run: cargo clippy --all-targets
+
+  ui:
+    name: ui (typecheck, lint, build)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ui
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --frozen-lockfile
+      - run: bun run lint
+      - run: bun run build
+
+  app:
+    name: app (typecheck, lint)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --frozen-lockfile
+      - run: bunx tsc --noEmit
+      # Non-blocking for now: ~20 pre-existing react-hooks/set-state-in-effect
+      # errors predate this workflow. Surfaced here so they're visible and
+      # don't quietly grow, without turning day-one CI red on unrelated debt.
+      - run: bunx eslint .
+        continue-on-error: true

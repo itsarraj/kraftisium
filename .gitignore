@@ -1,0 +1,185 @@
+# Rust build and dependency files
+/target/
+**/target/
+Cargo.lock
+
+# Editor and IDE settings
+.idea/
+.vscode/
+*.sw?
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Docker output
+*.pid
+
+# nginx one-off copies
+*.conf.ready
+*.conf.new
+*.conf.NEW
+*.conf.tmp
+
+# Environment files
+.env
+.env.*
+!.env.example
+!.env.*.example
+!*.env.example
+!env.example
+
+# Sensitive configuration files
+configuration.yaml
+configuration.*.yaml
+configuration.json
+configuration.*.json
+!configuration.example.yaml
+!configuration.*.example.yaml
+!configuration.example.json
+!configuration.*.example.json
+# Misc
+*.bak
+*.tmp
+*.swp
+*.swo
+
+# Ignore node_modules just in case, if any frontend bits are added here
+node_modules/
+npm-debug.log
+
+# Ignore test output and coverage
+coverage/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+.Python
+ai-tests/**/__pycache__/
+ai-tests/.env
+ai-tests/.env.*
+!ai-tests/.env.example
+!ai-tests/.env.*.example
+
+# Redis / accidental dumps in repo tree
+*.rdb
+dump.rdb
+bff/migrations/*.rdb
+
+############################################################
+# app (Expo / React Native)
+############################################################
+app/node_modules/
+
+# Expo
+app/.expo/
+app/dist/
+app/web-build/
+
+# Mobile binaries
+*.apk
+*.aab
+*.ipa
+
+# Native
+app/.kotlin/
+*.orig.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+
+# Metro
+app/.metro-health-check*
+
+# debug
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+
+# macOS
+*.pem
+# Public Play / upload certs under play-store are safe to commit
+!app/play-store/**/*.pem
+
+# local env files (scoped to mobile app)
+app/.env
+app/.env.*
+!app/.env.example
+!app/.env.*.example
+!app/env.example
+
+# Local keystore backups (never commit)
+app/@itsarraj__*.jks
+app/play-store/**/*.jks
+app/google-services.json
+
+# typescript
+*.tsbuildinfo
+
+app/app-example
+
+# generated native folders
+app/ios/
+app/android/
+
+
+############################################################
+# bff (Rust)
+############################################################
+bff/server.log
+bff/server.pid
+bff/.env
+bff/.env.*
+!bff/.env.example
+!bff/.env.*.example
+bff/configuration.yaml
+bff/configuration.*.yaml
+!bff/configuration.example.yaml
+!bff/configuration.*.example.yaml
+bff/.cache/
+bff/data/
+
+############################################################
+# ui (Node)
+############################################################
+ui/.env
+ui/.env.*
+!ui/.env.example
+!ui/.env.*.example
+ui/logs
+ui/*.log
+ui/npm-debug.log*
+ui/yarn-debug.log*
+ui/pnpm-debug.log*
+ui/lerna-debug.log*
+
+ui/node_modules/
+ui/jspm_packages/
+
+ui/dist/
+ui/dist-ssr/
+
+ui/.npm
+ui/.eslintcache
+ui/.node_repl_history
+ui/*.tgz
+ui/.yarn-integrity
+
+# Keep only extensions recommendations tracked for this project
+!ui/.vscode/
+ui/.vscode/*
+!ui/.vscode/extensions.json
+
+# docs for me
+docs/
+doc-vps-envs/*
+!doc-vps-envs/.env.example
+drafts/
+only-for-pull-requests/

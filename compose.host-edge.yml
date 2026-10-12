@@ -1,0 +1,31 @@
+# VPS deployment behind existing host nginx (loopback ports only)
+#
+# Usage:
+#   ./scripts/vps-deploy-host-edge.sh
+#   docker compose -f compose.base.yml -f compose.host-edge.yml up -d --build
+#
+# Host nginx examples: docker/host-nginx/*.conf.example
+
+services:
+  bff:
+    environment:
+      BFF__EMAIL__BASE_URL: ${PUBLIC_BFF_URL}
+      BFF__EMAIL__FRONTEND_BASE_URL: ${PUBLIC_WEB_URL}
+      # configuration.yaml has this false for local/dev convenience; explicitly
+      # forced false here too so login doesn't require email verification.
+      BFF__AUTH__REQUIRE_EMAIL_VERIFICATION: "false"
+    ports:
+      - "${BFF_HOST_EDGE_PORT:-14682}:8000"
+
+  kraftisium-web:
+    build:
+      args:
+        VITE_BFF_API_URL: ${PUBLIC_BFF_URL:-__RELATIVE__}
+        VITE_BFF_API_VERSION: ${VITE_BFF_API_VERSION:-v1}
+        VITE_TURNSTILE_SITE_KEY: ${VITE_TURNSTILE_SITE_KEY:-}
+    ports:
+      - "${WEB_HOST_EDGE_PORT:-14680}:80"
+
+  resume-matcher:
+    ports:
+      - "${MATCHER_HOST_EDGE_PORT:-14685}:8095"

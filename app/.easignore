@@ -1,0 +1,16 @@
+# EAS cloud builds run prebuild. Local native projects and caches must not be uploaded.
+android/
+ios/
+.expo/
+.expo-shared/
+
+# Local API override (eas.json production env sets the store API URL)
+.env
+.env.*
+!.env.example
+
+node_modules
+*.jks
+*.keystore
+*.aab
+*.apk

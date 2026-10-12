@@ -1,0 +1,37 @@
+FROM python:3.11-slim-bookworm
+
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY requirements-matcher.txt .
+RUN pip install --no-cache-dir -r requirements-matcher.txt
+
+COPY resume_job_matcher ./resume_job_matcher
+COPY matcher_service.py .
+
+# Bake MiniLM into the image so first boot does not hit Hugging Face.
+ENV HF_HOME=/opt/hf-cache \
+    TRANSFORMERS_CACHE=/opt/hf-cache \
+    SENTENCE_TRANSFORMERS_HOME=/opt/hf-cache \
+    MATCHER_MODEL_ID=sentence-transformers/all-MiniLM-L6-v2 \
+    PYTHONPATH=/app \
+    MATCHER_DEVICE=cpu
+RUN mkdir -p /opt/hf-cache \
+    && python - <<'PY'
+from resume_job_matcher.embeddings import load_model_and_tokenizer, embed_texts
+import os
+model, tokenizer = load_model_and_tokenizer(os.environ.get("MATCHER_MODEL_ID"))
+embed_texts(model, tokenizer, ["warmup"], device="cpu")
+print("model baked ok")
+PY
+
+EXPOSE 8095
+
+HEALTHCHECK --interval=30s --timeout=10s --start-period=90s --retries=5 \
+    CMD curl -fsS http://127.0.0.1:8095/health | grep -q '"model_loaded":true' || exit 1
+
+CMD ["python", "-m", "uvicorn", "matcher_service:app", "--host", "0.0.0.0", "--port", "8095"]

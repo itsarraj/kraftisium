@@ -1,0 +1,34 @@
+# Rust build artifacts
+/target/
+target/
+**/*.rs.bk
+Cargo.lock
+
+# Environment & secrets
+.env
+.env.*
+!.env.example
+!.env.*.example
+!*.env.example
+
+# Sensitive configuration files
+configuration.yaml
+configuration.*.yaml
+configuration.json
+configuration.*.json
+!configuration.example.yaml
+!configuration.*.example.yaml
+!configuration.example.json
+!configuration.*.example.json
+
+# Media & data
+/uploads/
+uploads/
+/data/
+data/
+
+# Server logs & process files
+server.log
+server.pid
+*.log
+.cache/

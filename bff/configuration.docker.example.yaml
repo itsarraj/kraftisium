@@ -1,0 +1,54 @@
+# Defaults for Docker; compose / BFF__* env vars override at runtime.
+application_host: "0.0.0.0"
+application_port: 8000
+
+database:
+  host: "postgres"
+  port: 5432
+  username: "seekers"
+  password: "override-via-env"
+  database_name: "kraftisium"
+
+redis:
+  host: "redis"
+  port: 6379
+  password: null
+  database: null
+
+jwt:
+  secret: "override-via-env"
+  access_token_expiration_hours: 24
+  refresh_token_expiration_days: 30
+
+stats:
+  use_hardcoded: true
+  refresh_interval_seconds: 3600
+  live_jobs: 764
+  companies: 500
+  candidates: 52417
+  new_jobs: 516
+
+matcher:
+  base_url: null
+  internal_secret: null
+
+subscription:
+  founding_premium_limit: 0
+  founding_premium_years: 1
+  yearly_price_usd: 199
+  free_ai_matches_limit: 3
+  auto_grant_yearly_premium: false
+
+object_storage:
+  endpoint: "http://rustfs:9000"
+  bucket: "resumes"
+  access_key_id: "rustfsadmin"
+  secret_access_key: "rustfsadmin"
+  region: "us-east-1"
+
+email:
+  api_key: ""
+  from_email: "noreply@example.com"
+  from_name: "Kraftisium"
+  base_url: "http://localhost:8000"
+  frontend_base_url: "http://localhost"
